@@ -3,7 +3,19 @@ const productModel = require('./Model');
 //lấy danh sách sản phẩm từ database
 const getAllProduct = async () => {
   try {
+    // page = 1;
+    // size = 10;
+    // let skip = (page - 1) * size;
+    // let limit = size;
+
     return await productModel.find();
+    // return await productModel
+    // .find({},'name price category') //lấy ra tên và giá sản phẩm
+    // .populate('category', ' name ') //lấy ra tên danh mục
+    // .sort({price:1}) //sắp xếp theo giá tăng dần
+    // .skip(0) //bỏ qua 2 sản phẩm đầu tiên
+    // .limit(2) //lấy 2 sản phẩm tiếp theo
+
   } catch (error) {
     console.log('Product service getAllProduct error: ', error);
     throw error;
@@ -45,7 +57,9 @@ const getProductById = async (id) => {
   try {
     // let product = data.find(item => item._id.toString() == id.toString());
     // return product;
-    return productModel.findById(id);
+    let item = await productModel.findById(id);
+    console.log(item);
+    return item;
   } catch (error) {
     console.log(error);
 
@@ -83,8 +97,34 @@ const updateProductById = async (id, name, price, quantity, image, category) => 
   }
   return false;
 }
+const searchProduct = async (keyword) => {
+  try { 
+    let query = {
+      //gt: greater than
+      //lt: less than
+      //gte: greater than or equal
+      //lte: less than or equal
+      price : { $gt: 1, $lt: 100 },
+      //regex: regular expression
+      //options: i: ignore case
+      //tìm kiếm theo tên sản phẩm
+      // name : { $regex: keyword, $options: 'i' },
+      //tìm kiếm chính xác
+      name: keyword,
+      email: email,
+      $or: [{quantity:{$gte:20}}, {quantity:{$lte:5}}]
+    };
+    let products = await productModel.find(query);
+    await productModel.find({}, 'name price');
+    return products;
 
-module.exports = { getAllProduct, deleteProduct, addProduct, getProductById, updateProductById }
+  } catch (error) {
+    console.log('Product service searchProduct error: ', error);
+  }
+  return false;
+}
+
+module.exports = { getAllProduct, deleteProduct, addProduct, getProductById, updateProductById, searchProduct}
 var data = [{
   "_id": 1,
   "name": "Shanahan LLC",

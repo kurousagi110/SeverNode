@@ -42,4 +42,13 @@ const updateProductById = async (id, name, price, quantity, image, category) => 
     }
 }
 
-module.exports = {getAllProduct, deleteProductById, addProduct, getProductById, updateProductById}
+const searchProduct = async (name) => {
+    try {
+        return await productService.searchProduct(name);
+    } catch (error) {
+        console.log('Product controller searchProduct error: ',error);
+        return null;
+    }
+}
+
+module.exports = {getAllProduct, deleteProductById, addProduct, getProductById, updateProductById, searchProduct}

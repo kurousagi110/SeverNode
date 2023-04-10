@@ -15,7 +15,7 @@ const categorySchema = new Schema({
     },
 });
 
-module.exports = mongoose.model('category', categorySchema);
+module.exports =mongoose.models.category || mongoose.model('category', categorySchema);
 //category => categories trong database
 //
 //  * collections = table

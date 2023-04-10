@@ -332,7 +332,7 @@
                         <select name="category" class="form-control">
                             {{#each categories}}
                             {{#if this.selected}}
-                            <option selected="'{{this._id}}'">{{this.name}}</option>
+                            <option selected="{{this._id}}">{{this.name}}</option>
                             {{else}}
                             <option value="{{this._id}}">{{this.name}}</option>
                             {{/if}}

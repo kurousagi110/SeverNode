@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const AppConstans = require('../constants/AppConstants');
 
 const authenWeb = (req, res, next) => {
     const { session } = req;
@@ -6,7 +7,7 @@ const authenWeb = (req, res, next) => {
     if (!session) {
         // nếu chưa login
         if (url.includes('login')) {
-            next();
+            return next();
         } else {
             res.redirect('/login');
         }
@@ -14,7 +15,7 @@ const authenWeb = (req, res, next) => {
         const { token } = session;
         if (!token) {
             if (url.includes('login')) {
-                next();
+                return next();
             } else {
                 res.redirect('/login');
             }
@@ -22,22 +23,48 @@ const authenWeb = (req, res, next) => {
             jwt.verify(token, 'secret', function (error, decoded) {
                 if (error) {
                     if (url.includes('login')) {
-                        next();
+                        return next();
                     } else {
                         res.redirect('/login');
                     }
                 } else {
-                    // nếu đã login
-                    if (url.includes('login')) {
-                        // qua home
-                        res.redirect('/');
+                    //check role
+                    const { role } = decoded;
+                    if (role < AppConstans.ROLES.ADMIN) {
+                        req.session.destroy();
+                        return res.redirect('/login');
                     } else {
-                        next();
+                        // nếu đã login
+                        if (url.includes('login')) {
+                            // qua home
+                            res.redirect('/');
+                        } else {
+                            return next();
+                        }
                     }
+
                 }
             })
         }
     }
 }
+const authenAPI = (req, res, next) => {
+    let token = null;
+    if (req.headers.authorization &&
+        req.headers.authorization.split(' ')[0] == 'Bearer')
+        token = req.headers.authorization.split(' ')[1];
 
-module.exports = { authenWeb };
+    if (token) {
+        jwt.verify(token, 'secret', function (error, decoded) {
+            if (error) {
+                return res.status(401).json({ status: false })
+            } else {
+                return next();
+            }
+        })
+    } else {
+        return res.status(401).json({ status: false })
+    }
+}
+
+module.exports = { authenWeb, authenAPI };

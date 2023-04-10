@@ -3,10 +3,12 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cors = require('cors'); //import cors
 const session = require('express-session');
 const mongoose = require('mongoose');
 require('./components/category/Model')
 require('./components/product/Model')
+require('./components/user/Model')
 
 const indexRouter = require('./routes/index');
 const userCpanelRouter = require('./routes/cpanel/user');
@@ -34,6 +36,14 @@ app.use(session({
   saveUninitialized: true,
   cookie: { secure: false }
 }));
+
+//khai báo cors
+app.use(cors({ 
+  origin: ['http://localhost:3000', 'http://localhost:3001',],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 
 //conect to mongodb
 mongoose.connect('mongodb://127.0.0.1:27017/admin?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false', {

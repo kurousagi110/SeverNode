@@ -11,7 +11,7 @@ const schema = new Schema({
     category: { type: ObjectID, ref: 'category'},
 });
 
-module.exports = mongoose.model('product', schema);
+module.exports =mongoose.models.product|| mongoose.model('product', schema);
 //category => categories trong database
 //
 //  * collections = table

@@ -27,7 +27,7 @@ router.post('/login', async(req, res, next) => {
       const result = await userServices.login(email, password);
       if(result) {
         //tạo token   
-        const token = jwt.sign({id :1 , name:'Hello'},
+        const token = jwt.sign({_id: result._id, role : result.role},
                                 'secret', {expiresIn: '1h'});
         //lưu token vào session
         req.session.token = token;

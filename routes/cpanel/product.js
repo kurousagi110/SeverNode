@@ -81,7 +81,9 @@ router.get('/:id/edit',[authenWeb], async (req, res, next) => {
     try {
         const { id } = req.params;
         const product = await productController.getProductById(id);
+        console.log(product);
         let categories = await categoryController.getAllCategories();
+        console.log(categories);
         for (let index = 0 ; index < categories.length; index++) {
             const element = categories[index];
             categories[index].selected = false;
